@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Выходное интервью</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --paper: #faf8f4;
+    --accent: #c8956c;
+    --accent2: #7b6fa0;
+    --line: #e0dbd2;
+    --soft: #f0ece4;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Jost', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 40px 20px 80px;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; right: 0;
+    width: 40vw; height: 100vh;
+    background: linear-gradient(160deg, #ede8f5 0%, #faf8f4 60%);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .header {
+    margin-bottom: 40px;
+    animation: fadeUp 0.7s ease both;
+  }
+
+  .header-eyebrow {
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(30px, 6vw, 50px);
+    font-weight: 600;
+    line-height: 1.15;
+    margin-bottom: 16px;
+  }
+
+  .header p {
+    font-size: 15px;
+    font-weight: 300;
+    color: #666;
+    line-height: 1.7;
+    max-width: 480px;
+  }
+
+  .divider {
+    width: 48px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    margin: 20px 0;
+    border-radius: 2px;
+  }
+
+  .progress-bar {
+    height: 3px;
+    background: var(--line);
+    border-radius: 2px;
+    margin-bottom: 44px;
+    overflow: hidden;
+    animation: fadeUp 0.7s 0.1s ease both;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 2px;
+    transition: width 0.5s cubic-bezier(.4,0,.2,1);
+    width: 0%;
+  }
+
+  .step { display: none; animation: fadeUp 0.45s ease both; }
+  .step.active { display: block; }
+
+  .step-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 28px;
+  }
+
+  .field { margin-bottom: 36px; }
+
+  .question {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--ink);
+    margin-bottom: 18px;
+    line-height: 1.5;
+  }
+
+  .question span {
+    font-family: 'Jost', sans-serif;
+    font-size: 13px;
+    color: #999;
+    font-weight: 300;
+    display: block;
+    margin-top: 4px;
+  }
+
+  select {
+    width: 100%;
+    background: white;
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 44px 14px 18px;
+    font-family: 'Jost', sans-serif;
+    font-size: 15px;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 18px center;
+  }
+
+  select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(200,149,108,0.1);
+  }
+
+  textarea {
+    width: 100%;
+    background: white;
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-family: 'Jost', sans-serif;
+    font-size: 15px;
+    color: var(--ink);
+    outline: none;
+    resize: vertical;
+    min-height: 110px;
+    line-height: 1.6;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(200,149,108,0.1);
+  }
+
+  .options-grid { display: grid; gap: 10px; }
+
+  .option-card { position: relative; }
+
+  .option-card input[type="radio"] {
+    position: absolute; opacity: 0; width: 0; height: 0;
+  }
+
+  .option-card label {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 18px;
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: 'Jost', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: #444;
+    background: white;
+    transition: all 0.2s;
+    line-height: 1.5;
+    user-select: none;
+  }
+
+  .option-card label::before {
+    content: '';
+    width: 18px; height: 18px;
+    min-width: 18px;
+    margin-top: 1px;
+    border: 1.5px solid var(--line);
+    border-radius: 50%;
+    transition: all 0.2s;
+    background: white;
+  }
+
+  .option-card input:checked + label {
+    border-color: var(--accent);
+    background: #fdf6f0;
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .option-card input:checked + label::before {
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: inset 0 0 0 3px white;
+  }
+
+  .yn-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1.5px solid var(--line);
+  }
+
+  .yn-table th {
+    font-family: 'Jost', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #999;
+    padding: 12px 16px;
+    text-align: center;
+    background: var(--soft);
+    border-bottom: 1.5px solid var(--line);
+  }
+
+  .yn-table th:first-child { text-align: left; }
+
+  .yn-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--line);
+    font-size: 14px;
+    color: #444;
+    line-height: 1.5;
+    vertical-align: middle;
+  }
+
+  .yn-table tr:last-child td { border-bottom: none; }
+  .yn-table td.center { text-align: center; }
+
+  .yn-radio {
+    width: 20px; height: 20px;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+
+  .error-msg {
+    color: #e05c5c;
+    font-size: 13px;
+    margin-top: 8px;
+    display: none;
+  }
+
+  .field.has-error .options-grid {
+    outline: 2px solid #e05c5c;
+    border-radius: 10px;
+  }
+
+  .field.has-error select {
+    border-color: #e05c5c;
+  }
+
+  .nav {
+    display: flex;
+    gap: 12px;
+    margin-top: 40px;
+    align-items: center;
+  }
+
+  .btn {
+    font-family: 'Jost', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    padding: 14px 32px;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #b87a52);
+    color: white;
+    box-shadow: 0 4px 16px rgba(200,149,108,0.3);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(200,149,108,0.4);
+  }
+
+  .btn-primary:disabled { opacity: 0.7; transform: none; cursor: not-allowed; }
+
+  .btn-secondary {
+    background: transparent;
+    color: #999;
+    border: 1.5px solid var(--line);
+  }
+
+  .btn-secondary:hover { color: var(--ink); border-color: #ccc; }
+
+  #success-screen {
+    display: none;
+    text-align: center;
+    padding: 60px 20px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .success-icon {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4caf7d, #2e9e65);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 28px;
+    font-size: 36px;
+    box-shadow: 0 8px 32px rgba(76,175,125,0.3);
+  }
+
+  #success-screen h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    margin-bottom: 12px;
+  }
+
+  #success-screen p {
+    font-size: 15px;
+    color: #777;
+    font-weight: 300;
+    line-height: 1.7;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 480px) {
+    body { padding: 28px 16px 60px; }
+    .yn-table td, .yn-table th { padding: 10px 8px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="header-eyebrow">Конфиденциально</div>
+    <h1>Выходное<br>интервью</h1>
+    <div class="divider"></div>
+    <p>Твои ответы помогут нам стать лучше. Все ответы анонимны и используются только для улучшения условий работы.</p>
+  </div>
+
+  <div class="progress-bar">
+    <div class="progress-fill" id="progress"></div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step active" id="step-1">
+    <div class="step-label">01 / 04 — О тебе</div>
+
+    <div class="field" id="field-department">
+      <div class="question">Из какого ты отдела?</div>
+      <select id="department">
+        <option value="">— Выбери отдел —</option>
+        <option>Продажи</option>
+        <option>Маркетинг</option>
+        <option>Разработка</option>
+        <option>HR</option>
+        <option>Финансы</option>
+        <option>Операции</option>
+        <option>Юридический</option>
+        <option>Другое</option>
+      </select>
+      <div class="error-msg">Пожалуйста, выбери отдел</div>
+    </div>
+
+    <div class="nav">
+      <button class="btn btn-primary" onclick="nextStep(1)">Далее →</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: Руководитель -->
+  <div class="step" id="step-2">
+    <div class="step-label">02 / 04 — Руководитель</div>
+
+    <div class="field" id="field-q1">
+      <div class="question">Выбери утверждение, которое наиболее верно для тебя.<span>Ожидания и цели</span></div>
+      <div class="options-grid">
+        <div class="option-card">
+          <input type="radio" name="q1" id="q1a" value="Понимал ожидания и цели чётко">
+          <label for="q1a">Я понимал, что от меня ожидает руководитель, свои конкретные цели и показатели успеха.</label>
+        </div>
+        <div class="option-card">
+          <input type="radio" name="q1" id="q1b" value="Цели были интуитивно понятны, но не проговаривались">
+          <label for="q1b">Я не до конца понимал ожидания руководителя, цели были понятны на интуитивном уровне, но не проговаривались со мной.</label>
+        </div>
+        <div class="option-card">
+          <input type="radio" name="q1" id="q1c" value="Не понимал ожиданий и целей">
+          <label for="q1c">Я не понимал, что от меня ждёт руководитель, каких целей мне нужно достигнуть и как замерить успех.</label>
+        </div>
+      </div>
+      <div class="error-msg">Пожалуйста, выбери утверждение</div>
+    </div>
+
+    <div class="field" id="field-q2">
+      <div class="question">Выбери утверждение, которое наиболее верно для тебя.<span>Обратная связь</span></div>
+      <div class="options-grid">
+        <div class="option-card">
+          <input type="radio" name="q2" id="q2a" value="Получал регулярную конкретную обратную связь">
+          <label for="q2a">Я регулярно получал обратную связь о своей работе, она была конкретной и своевременной.</label>
+        </div>
+        <div class="option-card">
+          <input type="radio" name="q2" id="q2b" value="Получал обратную связь неструктурировано, без регулярных 1:1">
+          <label for="q2b">Я получал обратную связь, но она давалась неструктурировано или «на ходу», не было регулярных встреч один на один.</label>
+        </div>
+        <div class="option-card">
+          <input type="radio" name="q2" id="q2c" value="Не получал обратную связь">
+          <label for="q2c">Я не получал обратную связь о своей работе, мне было непонятно, хорошо я работаю или нет.</label>
+        </div>
+      </div>
+      <div class="error-msg">Пожалуйста, выбери утверждение</div>
+    </div>
+
+    <div class="field" id="field-q3">
+      <div class="question">Выбери утверждение, которое наиболее верно для тебя.<span>Моя оценка себя как сотрудника</span></div>
+      <div class="options-grid">
+        <div class="option-card">
+          <input type="radio" name="q3" id="q3a" value="Совпадала с оценкой руководителя">
+          <label for="q3a">Совпадала с оценкой руководителя.</label>
+        </div>
+        <div class="option-card">
+          <input type="radio" name="q3" id="q3b" value="В половине случаев совпадала с оценкой руководителя">
+          <label for="q3b">В половине случаев совпадала с оценкой руководителя.</label>
+        </div>
+        <div class="option-card">
+          <input type="radio" name="q3" id="q3c" value="Не совпадала с оценкой руководителя">
+          <label for="q3c">Не совпадала с оценкой руководителя.</label>
+        </div>
+      </div>
+      <div class="error-msg">Пожалуйста, выбери утверждение</div>
+    </div>
+
+    <div class="nav">
+      <button class="btn btn-secondary" onclick="prevStep(2)">← Назад</button>
+      <button class="btn btn-primary" onclick="nextStep(2)">Далее →</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: Команда -->
+  <div class="step" id="step-3">
+    <div class="step-label">03 / 04 — Команда и среда</div>
+
+    <div class="field" id="field-q4">
+      <div class="question">Выбери утверждение, которое наиболее верно для тебя.<span>Атмосфера в отделе</span></div>
+      <div class="options-grid">
+        <div class="option-card">
+          <input type="radio" name="q4" id="q4a" value="Комфортная атмосфера, взаимопомощь и поддержка">
+          <label for="q4a">Мне было комфортно работать с коллегами в моём отделе, было ощущение взаимопомощи, единомыслия и поддержки.</label>
+        </div>
+        <div class="option-card">
+          <input type="radio" name="q4" id="q4b" value="Некомфортно с некоторыми коллегами">
+          <label for="q4b">Мне было некомфортно работать с некоторыми коллегами: не было желания помочь, могли ответить грубо.</label>
+        </div>
+        <div class="option-card">
+          <input type="radio" name="q4" id="q4c" value="Токсичная атмосфера в отделе">
+          <label for="q4c">В моём отделе токсичная атмосфера: коллеги общаются грубо, нет взаимопонимания и поддержки, каждый сам по себе.</label>
+        </div>
+      </div>
+      <div class="error-msg">Пожалуйста, выбери утверждение</div>
+    </div>
+
+    <div class="field" id="field-q5">
+      <div class="question">Выбери утверждение, которое наиболее верно для тебя.<span>Доверие к руководителю</span></div>
+      <div class="options-grid">
+        <div class="option-card">
+          <input type="radio" name="q5" id="q5a" value="Доверительные отношения, мог обращаться за советом">
+          <label for="q5a">У меня были доверительные отношения с руководителем, я мог обратиться к нему в сложной ситуации и посоветоваться в решении проблемы.</label>
+        </div>
+        <div class="option-card">
+          <input type="radio" name="q5" id="q5b" value="Доверял, но сложно было обращаться за советом">
+          <label for="q5b">Я доверял своему руководителю, но мне было сложно обращаться к нему за советом.</label>
+        </div>
+        <div class="option-card">
+          <input type="radio" name="q5" id="q5c" value="Не мог обращаться к руководителю из-за страха или негативной реакции">
+          <label for="q5c">Я не мог обратиться к руководителю за советом или помощью из-за его негативной реакции или страха перед ним.</label>
+        </div>
+      </div>
+      <div class="error-msg">Пожалуйста, выбери утверждение</div>
+    </div>
+
+    <div class="field" id="field-q6">
+      <div class="question">Выбери утверждение, которое наиболее верно для тебя.<span>Культура вопросов</span></div>
+      <div class="options-grid">
+        <div class="option-card">
+          <input type="radio" name="q6" id="q6a" value="Всегда мог задать вопрос и получить помощь">
+          <label for="q6a">Если у меня возникали вопросы, я всегда мог обратиться с ними к коллегам и мне помогали.</label>
+        </div>
+        <div class="option-card">
+          <input type="radio" name="q6" id="q6b" value="Редко спрашивал, но получал помощь когда просил">
+          <label for="q6b">Я редко задавал вопросы по работе, так как не люблю это делать, но если приходилось, то всегда получал помощь.</label>
+        </div>
+        <div class="option-card">
+          <input type="radio" name="q6" id="q6c" value="Получал негатив при вопросах">
+          <label for="q6c">Я не всегда задавал вопросы, поскольку получал негатив от коллег, когда что-то спрашивал.</label>
+        </div>
+        <div class="option-card">
+          <input type="radio" name="q6" id="q6d" value="Нет культуры взаимопомощи, некому задать вопрос">
+          <label for="q6d">В отделе нет культуры взаимопомощи, всем было не до меня, некому было задать вопрос.</label>
+        </div>
+      </div>
+      <div class="error-msg">Пожалуйста, выбери утверждение</div>
+    </div>
+
+    <div class="nav">
+      <button class="btn btn-secondary" onclick="prevStep(3)">← Назад</button>
+      <button class="btn btn-primary" onclick="nextStep(3)">Далее →</button>
+    </div>
+  </div>
+
+  <!-- STEP 4: Условия и открытые вопросы -->
+  <div class="step" id="step-4">
+    <div class="step-label">04 / 04 — Условия и советы</div>
+
+    <div class="field">
+      <div class="question">Согласись или не согласись с утверждениями.<span>Рабочие условия и инструменты</span></div>
+      <table class="yn-table">
+        <thead>
+          <tr>
+            <th>Утверждение</th>
+            <th>Да</th>
+            <th>Нет</th>
+            <th>Не применимо</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Моя техника подходила для задач и работала исправно.</td>
+            <td class="center"><input class="yn-radio" type="radio" name="q7a" value="Да"></td>
+            <td class="center"><input class="yn-radio" type="radio" name="q7a" value="Нет"></td>
+            <td class="center"><input class="yn-radio" type="radio" name="q7a" value="Не применимо"></td>
+          </tr>
+          <tr>
+            <td>Я мог быстро получить доступ к нужным кабинетам и инструментам.</td>
+            <td class="center"><input class="yn-radio" type="radio" name="q7b" value="Да"></td>
+            <td class="center"><input class="yn-radio" type="radio" name="q7b" value="Нет"></td>
+            <td class="center"><input class="yn-radio" type="radio" name="q7b" value="Не применимо"></td>
+          </tr>
+          <tr>
+            <td>У меня было удобное рабочее место в офисе.</td>
+            <td class="center"><input class="yn-radio" type="radio" name="q7c" value="Да"></td>
+            <td class="center"><input class="yn-radio" type="radio" name="q7c" value="Нет"></td>
+            <td class="center"><input class="yn-radio" type="radio" name="q7c" value="Работал удалённо"></td>
+          </tr>
+          <tr>
+            <td>Мне было комфортно работать в офисе, пространство хорошо оборудовано.</td>
+            <td class="center"><input class="yn-radio" type="radio" name="q7d" value="Да"></td>
+            <td class="center"><input class="yn-radio" type="radio" name="q7d" value="Нет"></td>
+            <td class="center"><input class="yn-radio" type="radio" name="q7d" value="Работал удалённо"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="field">
+      <div class="question">Что в работе больше всего мешало тебе быть эффективным?<span>Процессы, люди, инструменты — с примером</span></div>
+      <textarea id="q8" placeholder="Например: долгое согласование документов, нехватка доступов..."></textarea>
+    </div>
+
+    <div class="field">
+      <div class="question">Что в управлении (менеджменте) стоит изменить в первую очередь?</div>
+      <textarea id="q9" placeholder="Твои наблюдения и предложения..."></textarea>
+    </div>
+
+    <div class="field">
+      <div class="question">Что в компании точно нельзя ломать или терять?</div>
+      <textarea id="q10" placeholder="То, что ты ценил больше всего..."></textarea>
+    </div>
+
+    <div class="field">
+      <div class="question">Поле для любой обратной связи.<span>необязательно</span></div>
+      <textarea id="q11" placeholder="Любые мысли, которые не вошли в предыдущие вопросы..."></textarea>
+    </div>
+
+    <div class="nav">
+      <button class="btn btn-secondary" onclick="prevStep(4)">← Назад</button>
+      <button class="btn btn-primary" id="submit-btn" onclick="submitForm()">Отправить ✓</button>
+    </div>
+
+    <p id="submit-error" style="color:#e05c5c;font-size:13px;margin-top:12px;display:none;">
+      Произошла ошибка. Пожалуйста, попробуй ещё раз.
+    </p>
+  </div>
+
+  <div id="success-screen">
+    <div class="success-icon">✓</div>
+    <h2>Спасибо!</h2>
+    <p>Твои ответы сохранены.<br>Желаем удачи на новом пути!</p>
+  </div>
+
+</div>
+
+<script>
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxh8WWHaaqUanA78MNv7JhWWhhpRT5AzaH_cuc26FVvf6eNgSRv3TdGskxOjBp72YnsSg/exec';
+  const TOTAL_STEPS = 4;
+  let currentStep = 1;
+
+  function updateProgress() {
+    document.getElementById('progress').style.width = ((currentStep - 1) / TOTAL_STEPS * 100) + '%';
+  }
+
+  function showStep(n) {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.getElementById('step-' + n).classList.add('active');
+    currentStep = n;
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function nextStep(from) { if (validateStep(from)) showStep(from + 1); }
+  function prevStep(from) { showStep(from - 1); }
+
+  function radio(name) {
+    const el = document.querySelector(`input[name="${name}"]:checked`);
+    return el ? el.value : '—';
+  }
+
+  function validateStep(step) {
+    let valid = true;
+    const checks = {
+      1: [{ id: 'field-department', ok: () => !!document.getElementById('department').value }],
+      2: [
+        { id: 'field-q1', ok: () => radio('q1') !== '—' },
+        { id: 'field-q2', ok: () => radio('q2') !== '—' },
+        { id: 'field-q3', ok: () => radio('q3') !== '—' },
+      ],
+      3: [
+        { id: 'field-q4', ok: () => radio('q4') !== '—' },
+        { id: 'field-q5', ok: () => radio('q5') !== '—' },
+        { id: 'field-q6', ok: () => radio('q6') !== '—' },
+      ],
+    };
+    (checks[step] || []).forEach(({ id, ok }) => {
+      const f = document.getElementById(id);
+      const err = f.querySelector('.error-msg');
+      if (!ok()) {
+        f.classList.add('has-error');
+        if (err) err.style.display = 'block';
+        valid = false;
+      } else {
+        f.classList.remove('has-error');
+        if (err) err.style.display = 'none';
+      }
+    });
+    return valid;
+  }
+
+  async function submitForm() {
+    const btn = document.getElementById('submit-btn');
+    btn.textContent = 'Отправляю...';
+    btn.disabled = true;
+
+    const payload = {
+      department:           document.getElementById('department').value,
+      q1_цели:              radio('q1'),
+      q2_обратная_связь:    radio('q2'),
+      q3_оценка:            radio('q3'),
+      q4_атмосфера:         radio('q4'),
+      q5_доверие:           radio('q5'),
+      q6_вопросы:           radio('q6'),
+      q7_техника:           radio('q7a'),
+      q7_доступы:           radio('q7b'),
+      q7_рабочее_место:     radio('q7c'),
+      q7_офис:              radio('q7d'),
+      q8_эффективность:     document.getElementById('q8').value || '—',
+      q9_менеджмент:        document.getElementById('q9').value || '—',
+      q10_сохранить:        document.getElementById('q10').value || '—',
+      q11_обратная_связь:   document.getElementById('q11').value || '—',
+    };
+
+    try {
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      document.getElementById('progress').style.width = '100%';
+      document.querySelectorAll('.step').forEach(s => s.style.display = 'none');
+      document.getElementById('success-screen').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    } catch (err) {
+      document.getElementById('submit-error').style.display = 'block';
+      btn.textContent = 'Отправить ✓';
+      btn.disabled = false;
+    }
+  }
+
+  updateProgress();
+</script>
+</body>
+</html>
